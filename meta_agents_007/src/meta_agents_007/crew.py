@@ -23,14 +23,18 @@ class MetaAgents007():
     def researcher(self) -> Agent:
         return Agent(
             config=self.agents_config['researcher'], # type: ignore[index]
-            verbose=True
         )
 
     @agent
-    def reporting_analyst(self) -> Agent:
+    def agents_prompt_engineer(self) -> Agent:
         return Agent(
-            config=self.agents_config['reporting_analyst'], # type: ignore[index]
-            verbose=True
+            config=self.agents_config['agents_prompt_engineer'], # type: ignore[index]
+        )
+    
+    @agent
+    def task_prompt_engineer(self) -> Agent:
+        return Agent(
+            config=self.agents_config['task_prompt_engineer'], # type: ignore[index]
         )
 
     # To learn more about structured task outputs,
@@ -43,10 +47,15 @@ class MetaAgents007():
         )
 
     @task
-    def reporting_task(self) -> Task:
+    def author_agents_yaml_task(self) -> Task:
         return Task(
-            config=self.tasks_config['reporting_task'], # type: ignore[index]
-            output_file='report.md'
+            config=self.tasks_config['author_agents_yaml_task'], # type: ignore[index]
+        )
+    
+    @task
+    def author_tasks_yaml_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['author_tasks_yaml_task'], # type: ignore[index]
         )
 
     @crew

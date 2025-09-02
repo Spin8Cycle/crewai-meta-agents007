@@ -17,30 +17,30 @@ def run():
     """
     Run the crew.
     """
-    inputs = {
-        'topic': 'AI LLMs',
-        'current_year': str(datetime.now().year)
-    }
-    
-    try:
-        MetaAgents007().crew().kickoff(inputs=inputs)
-    except Exception as e:
-        raise Exception(f"An error occurred while running the crew: {e}")
-
+    while True:
+        user_input = input("Enter a topic(or press CTRL + C to quit): ")
+        inputs = {
+            'topic': user_input,
+        }
+        try:
+            MetaAgents007().crew().kickoff(inputs=inputs)
+        except Exception as e:
+            raise Exception(f"An error occurred while running the crew: {e}")
 
 def train():
     """
     Train the crew for a given number of iterations.
     """
-    inputs = {
-        "topic": "AI LLMs",
-        'current_year': str(datetime.now().year)
-    }
-    try:
-        MetaAgents007().crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
+    while True:
+        user_input = input("Enter a topic(or press CTRL + C to quit): ")
+        inputs = {
+            'topic': user_input,
+        }
+        try:
+            MetaAgents007().crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
 
-    except Exception as e:
-        raise Exception(f"An error occurred while training the crew: {e}")
+        except Exception as e:
+            raise Exception(f"An error occurred while training the crew: {e}")
 
 def replay():
     """
@@ -56,13 +56,13 @@ def test():
     """
     Test the crew execution and returns the results.
     """
-    inputs = {
-        "topic": "AI LLMs",
-        "current_year": str(datetime.now().year)
-    }
-    
-    try:
-        MetaAgents007().crew().test(n_iterations=int(sys.argv[1]), eval_llm=sys.argv[2], inputs=inputs)
+    while True:
+        user_input = input("Enter a topic(or press CTRL + C to quit): ")
+        inputs = {
+            'topic': user_input,
+        }
+        try:
+            MetaAgents007().crew().test(n_iterations=int(sys.argv[1]), eval_llm=sys.argv[2], inputs=inputs)
 
-    except Exception as e:
-        raise Exception(f"An error occurred while testing the crew: {e}")
+        except Exception as e:
+            raise Exception(f"An error occurred while testing the crew: {e}")
