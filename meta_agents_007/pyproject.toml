@@ -1,0 +1,23 @@
+[project]
+name = "meta_agents_007"
+version = "0.1.0"
+description = "meta-agents-007 using crewAI"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "crewai[tools]>=0.165.1,<1.0.0"
+]
+
+[project.scripts]
+meta_agents_007 = "meta_agents_007.main:run"
+run_crew = "meta_agents_007.main:run"
+train = "meta_agents_007.main:train"
+replay = "meta_agents_007.main:replay"
+test = "meta_agents_007.main:test"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.crewai]
+type = "crew"
