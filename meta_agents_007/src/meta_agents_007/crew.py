@@ -1,10 +1,19 @@
-from crewai import Agent, Crew, Process, Task
+from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
-# If you want to run a snippet of code before or after the crew starts,
-# you can use the @before_kickoff and @after_kickoff decorators
-# https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
+from .tools import builtin_tools
+from dotenv import load_dotenv
+import os
+from pathlib import Path
+
+load_dotenv()
+LOCAL_MODEL = os.getenv('LOCAL_MODEL')
+BASE_URL = os.getenv('BASE_URL')
+API_KEY = os.getenv('API_KEY')
+
+local_llm = LLM(**builtin_tools.LLM_CONFIG)
+local_emb = builtin_tools.EMB_CONFIG
 
 @CrewBase
 class MetaAgents007():
@@ -13,61 +22,74 @@ class MetaAgents007():
     agents: List[BaseAgent]
     tasks: List[Task]
 
-    # Learn more about YAML configuration files here:
-    # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
-    # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
-    
-    # If you would like to add tools to your agents, you can learn more about it here:
-    # https://docs.crewai.com/concepts/agents#agent-tools
+    def __init__(self):
+        self._custom_storage()
+
+    def _custom_storage(self):
+        root = Path(__file__).parent
+        storage_dir = root / 'mem_storage'
+        os.environ["CREWAI_STORAGE_DIR"] = str(storage_dir)
+
+    #----- AGENTS -----#
     @agent
     def researcher(self) -> Agent:
         return Agent(
-            config=self.agents_config['researcher'], # type: ignore[index]
+            config=self.agents_config['researcher'],  
+            llm=local_llm
         )
 
     @agent
     def agents_prompt_engineer(self) -> Agent:
         return Agent(
-            config=self.agents_config['agents_prompt_engineer'], # type: ignore[index]
+            config=self.agents_config['agents_prompt_engineer'],  
+            llm=local_llm,
+            tools=[
+                builtin_tools.web_search_tool('https://docs.crewai.com/concepts/agents#yaml-configuration-recommended'),
+            ]
         )
     
     @agent
     def task_prompt_engineer(self) -> Agent:
         return Agent(
-            config=self.agents_config['task_prompt_engineer'], # type: ignore[index]
+            config=self.agents_config['task_prompt_engineer'],  
+            llm=local_llm,
+            tools=[
+                builtin_tools.web_search_tool('https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended'),
+            ]
         )
 
-    # To learn more about structured task outputs,
-    # task dependencies, and task callbacks, check out the documentation:
-    # https://docs.crewai.com/concepts/tasks#overview-of-a-task
+    #----- TASKS -----#
     @task
     def research_task(self) -> Task:
         return Task(
-            config=self.tasks_config['research_task'], # type: ignore[index]
+            config=self.tasks_config['research_task'],  
         )
 
     @task
     def author_agents_yaml_task(self) -> Task:
         return Task(
-            config=self.tasks_config['author_agents_yaml_task'], # type: ignore[index]
+            config=self.tasks_config['author_agents_yaml_task'],  
         )
     
     @task
     def author_tasks_yaml_task(self) -> Task:
         return Task(
-            config=self.tasks_config['author_tasks_yaml_task'], # type: ignore[index]
+            config=self.tasks_config['author_tasks_yaml_task'],  
         )
 
     @crew
     def crew(self) -> Crew:
         """Creates the MetaAgents007 crew"""
-        # To learn how to add knowledge sources to your crew, check out the documentation:
-        # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
 
         return Crew(
-            agents=self.agents, # Automatically created by the @agent decorator
-            tasks=self.tasks, # Automatically created by the @task decorator
+            agents=self.agents, 
+            tasks=self.tasks, 
             process=Process.sequential,
             verbose=True,
-            # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
+            memory=True, # Add embedder if True
+            cache=True,
+            embedder = dict(
+                provider='openai',
+                config=local_emb
+            )
         )

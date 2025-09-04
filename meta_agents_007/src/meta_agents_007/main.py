@@ -23,7 +23,9 @@ def run():
             'topic': user_input,
         }
         try:
-            MetaAgents007().crew().kickoff(inputs=inputs)
+            result = MetaAgents007().crew().kickoff(inputs=inputs)
+            for i, task_output in enumerate(result.tasks_output):
+                print(f"Tasks {i} output: {task_output.raw}")
         except Exception as e:
             raise Exception(f"An error occurred while running the crew: {e}")
 

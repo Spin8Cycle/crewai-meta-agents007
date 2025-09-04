@@ -53,7 +53,7 @@ author_tasks_yaml_task:
       context:
         - write_task
         - research_task
-  agent: tasks_prompt_engineer
+  agent: task_prompt_engineer
   context:
     - research_task
     - author_agents_yaml_task
